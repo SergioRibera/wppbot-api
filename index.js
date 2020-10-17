@@ -4,47 +4,72 @@ const port = 3000;
 
 const BotManager = require('./App/botmanager');
 
-let bot = new BotManager(null);
+app.get('/start', async (req, res) => {
+    let session = await BotManager.start(req.query.sessionName);
 
-app.get('/qrcode', (req, res) => {
-    
-    bot.setListener('QrReady', (ress) => {
-        res.set('Content-Type', 'text/html');
-        res.send('<img src="'+ress+'">');
-
-        ress = ress.replace('data:image/png;base64,', '');
-        const imageBuffer = Buffer.from(ress, 'base64');
-        res.writeHead(200, {
-            'Content-Type': 'image/png',
-            'Content-Length': imageBuffer.length
-        });
-        res.end(imageBuffer);
-    });
-    bot.setListener('receiveMsg', (cliName, num, msg) => {
-        res.json(msg);
-    });
-    bot.init(req.query.sessionName);
+    if (["CONNECTED", "QRCODE", "STARTING"].includes(session.state)) {
+        res.status(200).json({ result: 'success', message: session.state });
+    } else {
+        res.status(200).json({ result: 'error', message: session.state });
+    }
 });
 
-app.get('/enviarmensaje', (req, res) => {
-    bot.init(req.query.sessionName);
-    bot.setListener('session', (name, cli) => {
-        //bot.setListener('receiveMsg', (cliName, num, msg) => {
-            cli.sendText(req.query.num, req.query.mensaje)
-                .then(res => { 
-                    console.log('Mensaje enviado desde: ' + name);
-                    console.log(res);
-                })
-                .catch(bot.onError);
-        //});
-    });
+app.get('/qrcode', async (req, res) => {
+    var session = BotManager.getSession(req.query.sessionName);
+
+    if (session != false) {
+        if (session.status != 'isLogged') {
+            if (req.query.image) {
+                session.qrcode = session.qrcode.replace('data:image/png;base64,', '');
+                const imageBuffer = Buffer.from(session.qrcode, 'base64');
+                res.writeHead(200, {
+                    'Content-Type': 'image/png',
+                    'Content-Length': imageBuffer.length
+                });
+                res.end(imageBuffer);
+            } else {
+                res.status(200).json({ result: "success", message: session.state, qrcode: session.qrcode });
+            }
+        } else {
+            res.status(200).json({ result: "error", message: session.state });
+        }
+    } else {
+        res.status(200).json({ result: "error", message: "NOTFOUND" });
+    }
 });
 
-app.post('/sendFile', async (req, res, next) => {
-    bot.sendFile(req.body.sessionName, req.body.number, req.body.base64Data, req.body.caption);
-    bot.setListener('sendMsg', (cliName, response) => {
-        res.json(response);
-    });
+app.get("/enviarmensaje", async  (req, res, next)  =>{
+     var result = await BotManager.sendText(
+        req.query.sessionName,
+        req.query.num,
+        req.query.mensaje
+    );
+    res.json(result);
+});//sendText
+
+app.post("/sendText", async function sendText(req, res, next) {
+    var result = await BotManager.sendText(
+        req.body.sessionName,
+        req.body.number,
+        req.body.mensaje
+    );
+    res.json(result);
+});
+
+app.post("/sendFile", async (req, res, next) => {
+    var result = await BotManager.sendFile(
+        req.body.sessionName,
+        req.body.number,
+        req.body.base64Data,
+        req.body.fileName,
+        req.body.caption
+    );
+    res.json(result);
+});
+
+app.get("/close", async (req, res, next) => {
+    var result = await BotManager.closeSession(req.query.sessionName);
+    res.json(result);
 });
 
 app.listen(port, () => {

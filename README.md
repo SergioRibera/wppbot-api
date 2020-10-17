@@ -35,6 +35,7 @@ Por último solo hace falta iniciar el bot
 - *setListener*
     La función setListener recibe por parámetro el nombre de la función
     a subscribir y la dicha función, las funciones disponibles son:
+
         - qrReady       => Esta dunción se llama cuando el codigo QR está listo
         - error         => Esta función se llama cuando ocurre algún error
         - session       => Esta función se llama cuando la sesion se ha creado
@@ -89,4 +90,6 @@ Por último solo hace falta iniciar el bot
 
         bot.sendFile('SesionMarketing', '370000666', imageBase64, 'nombredeimagen', 'Este es nuestro producto en oferta');
 
-
+## Please report all bugs and problems
+#### Thanks for install this tool, for see more visit [my web](https://sergioribera.com) (Very soon I will add an app store)
+#### Made with the <3 by [SergioRibera](https://sergioribera.com)

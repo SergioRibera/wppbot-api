@@ -11,6 +11,14 @@ app.get('/qrcode', (req, res) => {
     bot.setListener('QrReady', (ress) => {
         res.set('Content-Type', 'text/html');
         res.send('<img src="'+ress+'">');
+
+        ress = ress.replace('data:image/png;base64,', '');
+        const imageBuffer = Buffer.from(ress, 'base64');
+        res.writeHead(200, {
+            'Content-Type': 'image/png',
+            'Content-Length': imageBuffer.length
+        });
+        res.end(imageBuffer);
     });
     bot.setListener('receiveMsg', (cliName, num, msg) => {
         res.json(msg);

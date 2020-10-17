@@ -8,7 +8,6 @@ let bot = new BotManager(null);
 
 app.get('/qrcode', (req, res) => {
     
-    bot.sessionName = req.query.sessionName;
     bot.setListener('QrReady', (ress) => {
         res.set('Content-Type', 'text/html');
         res.send('<img src="'+ress+'">');
@@ -16,17 +15,16 @@ app.get('/qrcode', (req, res) => {
     bot.setListener('receiveMsg', (cliName, num, msg) => {
         res.json(msg);
     });
-    bot.init();
+    bot.init(req.query.sessionName);
 });
 
 app.get('/enviarmensaje', (req, res) => {
-    bot.sessionName = req.query.sessionName;
     bot.setListener('receiveMsg', (cliName, num, msg) => {
         bot.getClient(cliName).sendText(num, req.query.mensaje)
             .then(res => { console.log(res);console.log(msg); })
             .catch(bot.onError);
     });
-    bot.init();
+    bot.init(req.query.sessionName);
 });
 
 app.post('/sendFile', async (req, res, next) => {

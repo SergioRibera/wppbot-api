@@ -21,16 +21,15 @@ module.exports = class BotManager {
         this.emiter = new eventos.EventEmitter();
         
         this.client = [];
-        this.sessionName = _sessionName;
     }
 
     setListener(name, func){
         this.emiter.on(name, func);
     }
 
-    init() {
+    init(sessionName) {
         this.ven = venom
-            .create(this.sessionName,
+            .create(sessionName,
             (base64Qr, asciiQR) => {
                 this.emiter.emit('qrReady', base64Qr);
             })

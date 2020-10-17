@@ -28,9 +28,12 @@ Por último solo hace falta iniciar el bot
     bot.init();i
 
 #### Clase BotManager
-- *constructor*
-    El constructor recive un único parámetro el cual corresponde al nombre de
-    la sesion a abrir
+
+- *init*
+    La función init recibe un parametro el cual corresponde al nombre de la
+    sesion, ejemplo:
+
+        bot.init('SesionMarketing');
 
 - *setListener*
     La función setListener recibe por parámetro el nombre de la función

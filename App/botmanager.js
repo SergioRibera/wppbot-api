@@ -1,3 +1,5 @@
+'use strict';
+const fs = require('fs');
 const venom = require('venom-bot');
 const eventos = require('events');
 
@@ -116,21 +118,9 @@ module.exports = class BotManager {
                     autoClose: 60000, // Automatically closes the venom-bot only when scanning the QR code (default 60 seconds, if you want to turn it off, assign 0 or false)
                     createPathFileToken: false, //creates a folder when inserting an object in the client's browser, to work it is necessary to pass the parameters in the function create browserSessionToken
                 }
-                /*browserSessionToken
-                ///To receive the client's token use the function await clinet.getSessionTokenBrowser()
-                {
-                    WABrowserId: '"UnXjH....."',
-                    WASecretBundle:
-                    '{"key":"+i/nRgWJ....","encKey":"kGdMR5t....","macKey":"+i/nRgW...."}',
-                    WAToken1: '"0i8...."',
-                    WAToken2: '"1@lPpzwC...."',
-                }*/
             )
             .then((client) => {
                 session.client = client;
-                //prueba(client);// prueba de respuesta
-                // pruebamensaje(client);
-                //client.sendText('573177029929@c.us', 'pruebaaca');
             })
             .catch((erro) => {
                 console.log(erro);
@@ -165,10 +155,23 @@ module.exports = class BotManager {
             await session.client.close();
             console.log("voy a cerrar session2" );
         }
+        this.deleteSession(sessionName);
         session.state = "CLOSED";
         session.client = false;
         return { result: "success", message: "CLOSED" };
     }//close
+    
+    static deleteSession(sessionName) {
+        console.log(BotManager.getSession(sessionName));
+        let index = BotManager.getSessions().indexOf(BotManager.getSession(sessionName));
+        if(index > -1){
+            BotManager.sessions.splice(index, 1);
+            fs.unlink('./tokens/'+sessionName+'.data.json', err => {
+                if(err) throw err;
+                console.log("Session closed success");
+            });
+        }
+    }
 
     static getSession(sessionName) {
         var foundSession = false;

@@ -10,18 +10,22 @@ procesos, tiene la posibilidad de manejar multiples sesiones.
 
 #### Iniciando con WppBot
 
-    Primero se debe agregar el script a la referencia
+Primero que nada se debe instalar las dependencias, haciendo uso del comando:
+    
+    npm install --save
+
+Primero se debe agregar el script a la referencia
         
-        const BotManager = require('./App/botmanager');
+    const BotManager = require('./App/botmanager');
 
-    Luego necesitamos crear una instancia de la clase
+Luego necesitamos crear una instancia de la clase
         
-        let bot = new BotManager(sesionName); // en caso de no querer iniciar con una sesion, colocar null
+    let bot = new BotManager(sesionName); // en caso de no querer iniciar con una sesion, colocar null
 
-    Por último solo hace falta iniciar el bot
+Por último solo hace falta iniciar el bot
 
-        bot.sessionName = 'SesionMarketing';
-        bot.init();i
+    bot.sessionName = 'SesionMarketing';
+    bot.init();i
 
 #### Clase BotManager
 - *constructor*

@@ -19,12 +19,17 @@ app.get('/qrcode', (req, res) => {
 });
 
 app.get('/enviarmensaje', (req, res) => {
-    bot.setListener('receiveMsg', (cliName, num, msg) => {
-        bot.getClient(cliName).sendText(num, req.query.mensaje)
-            .then(res => { console.log(res);console.log(msg); })
-            .catch(bot.onError);
-    });
     bot.init(req.query.sessionName);
+    bot.setListener('session', (name, cli) => {
+        //bot.setListener('receiveMsg', (cliName, num, msg) => {
+            cli.sendText(req.query.num, req.query.mensaje)
+                .then(res => { 
+                    console.log('Mensaje enviado desde: ' + name);
+                    console.log(res);
+                })
+                .catch(bot.onError);
+        //});
+    });
 });
 
 app.post('/sendFile', async (req, res, next) => {
